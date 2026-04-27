@@ -1,10 +1,8 @@
 package banksystem;
 
-/** Ngoại lệ chung trong hệ thống ngân hàng. */
+//Lop cha cho tat ca cac loi nghiep vu ngan hang.
+
 public class BankException extends Exception {
-    /** * Khởi tạo ngoại lệ với thông báo.
-     * @param message thông báo lỗi
-     */
     public BankException(String message) {
         super(message);
     }

@@ -1,47 +1,21 @@
 package banksystem;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-/** Tài khoản vãng lai. */
 public class CheckingAccount extends Account {
-    private static final Logger logger = LoggerFactory.getLogger(CheckingAccount.class);
+    // Phi co dinh moi lan rut tien
+    private static final double FEE = 1.0;
 
-    public CheckingAccount(long accountNumber, double balance) {
+    public CheckingAccount(String accountNumber, double balance) {
         super(accountNumber, balance);
     }
 
     @Override
-    public void deposit(double amount) {
-        double initialBalance = getBalance();
-        try {
-            doDepositing(amount);
-            double finalBalance = getBalance();
-            Transaction transaction = new Transaction(
-                    Transaction.TYPE_DEPOSIT_CHECKING, amount, initialBalance, finalBalance);
-            addTransaction(transaction);
-            logger.info("Nạp tiền vãng lai thành công. Tài khoản: {}, Số tiền: {}",
-                    getAccountNumber(), amount);
-        } catch (BankException e) {
-            logger.error("Lỗi nạp tiền vãng lai tài khoản {}: {}",
-                    getAccountNumber(), e.getMessage(), e);
+    public void withdraw(double amount) throws InsufficientFundsException {
+        // [BAI 5]: Logic kiem tra so du bao gom ca phi dich vu
+        if (amount + FEE > balance) {
+            logger.error("Rut tien that bai: Tai khoan {} khong du so du de tra phi {}", accountNumber, FEE);
+            throw new InsufficientFundsException("Not enough balance for withdrawal and fee");
         }
-    }
-
-    @Override
-    public void withdraw(double amount) {
-        double initialBalance = getBalance();
-        try {
-            doWithdrawing(amount);
-            double finalBalance = getBalance();
-            Transaction transaction = new Transaction(
-                    Transaction.TYPE_WITHDRAW_CHECKING, amount, initialBalance, finalBalance);
-            addTransaction(transaction);
-            logger.info("Rút tiền vãng lai thành công. Tài khoản: {}, Số tiền: {}",
-                    getAccountNumber(), amount);
-        } catch (BankException e) {
-            logger.error("Lỗi rút tiền vãng lai tài khoản {}: {}",
-                    getAccountNumber(), e.getMessage(), e);
-        }
+        balance -= (amount + FEE);
+        logger.info("Tai khoan {}: Rut {} (Phi: {})", accountNumber, amount, FEE);
     }
 }

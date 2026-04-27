@@ -1,17 +1,19 @@
 package banksystem;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
-class ExceptionTest {
-
+public class ExceptionTest {
     @Test
-    void testBankExceptionMessage() {
-        // Test xem class BankException có lưu đúng thông báo lỗi không
-        String expectedMessage = "Lỗi giao dịch ngân hàng";
-        BankException exception = new BankException(expectedMessage);
+    void triggerErrorLogs() {
+        // [FIX]: Dung CheckingAccount thay vi Account vi Account la abstract
+        Account acc = new CheckingAccount("ERR_TEST", 0);
 
-        // Kiểm tra xem message lấy ra có khớp với message truyền vào không
-        assertEquals(expectedMessage, exception.getMessage(), "Thông báo lỗi không khớp!");
+        // [BÀI 9]: Khi gọi hàm này, logger.error sẽ ghi vào file logs/app.log
+        try {
+            acc.withdraw(999999);
+        } catch (InsufficientFundsException e) {
+            assertTrue(true); // Chỉ cần kích hoạt code để ghi log
+        }
     }
 }

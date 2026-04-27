@@ -3,68 +3,24 @@ package banksystem;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Lớp Customer đại diện cho một khách hàng. */
 public class Customer {
-    private long idNumber;
-    private String fullName;
-    private List<Account> accountList;
+    private String name;
+    private List<Account> accounts; // Danh sach cac tai khoan cua khach hang
 
-    /** Constructor không tham số. */
-    public Customer() {
-        this(0L, "");
+    public Customer(String name) {
+        this.name = name;
+        this.accounts = new ArrayList<>();
     }
 
-    /** Constructor có tham số. */
-    public Customer(long idNumber, String fullName) {
-        this.idNumber = idNumber;
-        this.fullName = fullName;
-        this.accountList = new ArrayList<>();
-    }
-
-    public long getIdNumber() {
-        return idNumber;
-    }
-
-    public void setIdNumber(long idNumber) {
-        this.idNumber = idNumber;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public List<Account> getAccountList() {
-        return accountList;
-    }
-
-    public void setAccountList(List<Account> accountList) {
-        if (accountList == null) {
-            this.accountList = new ArrayList<>();
-        } else {
-            this.accountList = accountList;
-        }
-    }
-
-    /** Thêm tài khoản cho khách hàng. */
     public void addAccount(Account account) {
-        if (account != null && !accountList.contains(account)) {
-            accountList.add(account);
-        }
+        accounts.add(account);
     }
 
-    /** Xóa tài khoản khỏi khách hàng. */
-    public void removeAccount(Account account) {
-        if (account != null) {
-            accountList.remove(account);
-        }
+    public List<Account> getAccounts() {
+        return accounts;
     }
 
-    /** Thông tin khách hàng dạng text. */
-    public String getCustomerInfo() {
-        return "Số CMND: " + idNumber + ". Họ tên: " + fullName + ".";
+    public String getName() {
+        return name;
     }
 }

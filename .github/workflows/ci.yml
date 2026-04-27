@@ -1,22 +1,49 @@
-name: Java CI with Maven
+# [BÀI 3]: Tên Workflow cho quá trình CI Automation
+name: Java CI Comprehensive Pipeline
 
 on:
+  # [BÀI 3 & BÀI 7]: Trigger tự động khi Push hoặc tạo Pull Request
   push:
+    branches: [ "main", "master" ]
+  pull_request:
     branches: [ "main", "master" ]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # [BÀI 4]: Matrix Strategy - Chạy kiểm thử trên đa hệ điều hành
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Cai dat JDK 17
+      # [BÀI 6]: Thiết lập JDK và Caching Maven để tối ưu tốc độ Pipeline
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'maven' # Bài 6: Tối ưu hóa pipeline bằng caching
 
-      # Chạy Maven để test
-      - name: Build and Test
-        run: mvn clean test
+      # [BÀI 2 & BÀI 7]: Chạy Checkstyle để Review code tự động
+      - name: Run Code Style Check
+        run: mvn checkstyle:check
+
+      # [BÀI 3 & BÀI 10]: Thực thi build vòng đời Maven (Test, Package, Verify)
+      - name: Build and Verify with Maven
+        run: mvn clean verify
+
+      # [BÀI 3, 5, 8]: Lưu giữ tệp .jar và báo cáo JaCoCo (Artifacts)
+      - name: Upload Build Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts-${{ matrix.os }}
+          path: |
+            target/*.jar
+            target/site/jacoco/

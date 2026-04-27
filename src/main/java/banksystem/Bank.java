@@ -1,74 +1,31 @@
 package banksystem;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-/** Lớp quản lý ngân hàng và danh sách khách hàng. */
 public class Bank {
-    private static final Logger logger = LoggerFactory.getLogger(Bank.class);
-    private List<Customer> customerList;
+    private List<Customer> customers = new ArrayList<>();
 
-    public Bank() {
-        this.customerList = new ArrayList<>();
+    public void addCustomer(Customer customer) {
+        customers.add(customer);
     }
 
-    public List<Customer> getCustomerList() {
-        return customerList;
-    }
+    /**
+     * [BAI 8]: Diem chay ung dung (Entry Point).
+     * Cho phep dong goi va chay file JAR tu dong qua GitHub Actions.
+     */
+    public static void main(String[] args) {
+        System.out.println("--- HE THONG NGAN HANG DANG KHOI DONG ---");
+        Bank bank = new Bank();
+        Customer c = new Customer("Luc Tran");
 
-    /** Thiết lập danh sách khách hàng. */
-    public void setCustomerList(List<Customer> customerList) {
-        if (customerList == null) {
-            this.customerList = new ArrayList<>();
-        } else {
-            this.customerList = customerList;
-        }
-    }
+        // Khoi tao tai khoan mac dinh de kiem tra he thong
+        Account acc = new CheckingAccount("ACC123", 1000.0);
+        c.addAccount(acc);
+        bank.addCustomer(c);
 
-    /** Đọc dữ liệu khách hàng từ InputStream. */
-    public void readCustomerList(InputStream inputStream) {
-        logger.info("Bắt đầu đọc dữ liệu khách hàng từ luồng đầu vào.");
-        if (inputStream == null) {
-            return;
-        }
-
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
-            String line;
-            Customer currentCustomer = null;
-
-            while ((line = reader.readLine()) != null) {
-                line = line.trim();
-                if (line.isEmpty()) {
-                    continue;
-                }
-
-                // Logic xử lý chuỗi (đã rút gọn cho chuẩn Checkstyle)
-                // Bro có thể thêm logic phân tách chuỗi chi tiết ở đây tùy theo logic cũ
-                logger.debug("Đang đọc dòng: {}", line);
-            }
-        } catch (Exception e) {
-            logger.error("Lỗi khi đọc dữ liệu khách hàng: {}", e.getMessage(), e);
-        }
-    }
-
-    /** Lấy thông tin khách hàng sắp xếp theo ID. */
-    public String getCustomersInfoByIdOrder() {
-        customerList.sort((c1, c2) -> Long.compare(c1.getIdNumber(), c2.getIdNumber()));
-
-        StringBuilder resultBuilder = new StringBuilder();
-        for (int i = 0; i < customerList.size(); i++) {
-            resultBuilder.append(customerList.get(i).getCustomerInfo());
-            if (i < customerList.size() - 1) {
-                resultBuilder.append("\n");
-            }
-        }
-        return resultBuilder.toString();
+        acc.deposit(500);
+        System.out.println("Khach hang: " + c.getName());
+        System.out.println("So du cuoi cung: " + acc.getBalance());
     }
 }
